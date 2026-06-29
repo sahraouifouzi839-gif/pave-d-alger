@@ -11,7 +11,14 @@
     <style>
         body { font-family: 'Poppins', sans-serif; }
         .font-title { font-family: 'Playfair Display', serif; }
+        /* تحسينات مخصصة ليتوافق حقل الاختيار المتعدد مع الثيم */
+        .ts-control { border-radius: 0.75rem !important; padding: 0.625rem 1rem !important; border-color: #E5E7EB !important; text-align: right !important; }
+        .ts-dropdown { border-radius: 0.75rem !important; text-align: right !important; }
+        .ts-control .item { bg-color: #FEF3C7 !important; color: #D97706 !important; border: 1px solid #FCD34D !important; border-radius: 0.5rem !important; padding: 2px 8px !important; }
     </style>
+    <!-- Tom Select CSS & JS لتمكين الاختيار المتعدد الفاخر -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 </head>
 <body class="bg-[#FFFDF9] text-gray-800">
 
@@ -159,9 +166,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">اختر الطلب أو الوجبة</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">اختر الأطباق أو الوجبات (يمكنك تحديد أكثر من طبق)</label>
                     
-                    <select id="ordered-item" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D97706] bg-white">
+                    <select id="ordered-item" required multiple class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D97706] bg-white text-right">
                         <optgroup label="Spécialités Signatures">
                             <option value="Poisson Doré">Poisson Doré de la Méditerranée - 1800 DZD</option>
                             <option value="Pizza Prestige">Pizza Prestige aux Fruits Frais - 1550 DZD</option>
@@ -197,7 +204,7 @@
                         </optgroup>
                     </select>
 
-                    <div id="custom-dish-container" class="hidden relative mt-1">
+                    <div id="custom-dish-container" class="hidden relative mt-2">
                         <input type="text" id="custom-item-name" class="w-full px-4 py-2.5 pl-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D97706] text-right" placeholder="مثال: طاجين زيتون، كوكا...">
                         <button type="button" id="back-to-select" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-xs font-bold text-red-600 hover:text-red-800 transition">إلغاء</button>
                     </div>
@@ -246,17 +253,26 @@
     </footer>
 
     <script>
+        // تفعيل مكتبة الاختيار المتعدد المتقدم
+        const tomSelectInstance = new TomSelect('#ordered-item', {
+            plugins: ['remove_button'],
+            create: false,
+            maxItems: null,
+            placeholder: "اضغط لاختيار وجبة أو أكثر...",
+            rtl: true
+        });
+
         const selectEl = document.getElementById('ordered-item');
         const customDishContainer = document.getElementById('custom-dish-container');
         const customItemInput = document.getElementById('custom-item-name');
         const backBtn = document.getElementById('back-to-select');
 
+        // تتبع اختيار الطبق المخصص يدوياً
         selectEl.addEventListener('change', function() {
-            if (this.value === 'custom_item') {
-                selectEl.classList.add('hidden');
+            const currentValues = Array.from(this.selectedOptions).map(o => o.value);
+            if (currentValues.includes('custom_item')) {
                 customDishContainer.classList.remove('hidden');
                 customItemInput.setAttribute('required', 'required');
-                customItemInput.focus();
             }
         });
 
@@ -264,22 +280,35 @@
             customDishContainer.classList.add('hidden');
             customItemInput.removeAttribute('required');
             customItemInput.value = '';
-            selectEl.classList.remove('hidden');
-            selectEl.value = selectEl.options[0].value;
+            tomSelectInstance.removeItem('custom_item');
         });
 
         document.getElementById('restaurant-order-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            let finalItem = selectEl.value;
-            if (selectEl.classList.contains('hidden')) {
-                finalItem = customItemInput.value;
+            // استخراج الأطباق التي اختارها الزبون
+            let selectedValues = Array.from(selectEl.selectedOptions).map(option => option.value);
+            
+            // إذا كان هناك طبق مكتوب يدوياً، نقوم بدمجه ونزع الكلمة المفتاحية المؤقتة
+            if (selectedValues.includes('custom_item')) {
+                selectedValues = selectedValues.filter(val => val !== 'custom_item');
+                if (customItemInput.value.trim() !== '') {
+                    selectedValues.push(customItemInput.value.trim());
+                }
+            }
+            
+            // تحويل الأطباق إلى نص واحد مفصول بفواصل ليذهب لعمود ORDRE في غوغل شيتس
+            const finalOrderString = selectedValues.join(', ');
+            
+            if (!finalOrderString) {
+                alert('الرجاء اختيار طبق واحد على الأقل من القائمة.');
+                return;
             }
             
             const orderData = {
                 name: document.getElementById('customer-name').value,
                 phone: document.getElementById('customer-phone').value,
-                order: finalItem,
+                order: finalOrderString,
                 qty: parseInt(document.getElementById('order-qty').value),
                 notes: document.getElementById('order-notes').value,
                 timestamp: new Date().toISOString()
@@ -297,15 +326,15 @@
                 if (response.ok) {
                     alert('تم إرسال طلبك بنجاح! سنتصل بك لتأكيده.');
                     document.getElementById('restaurant-order-form').reset();
+                    tomSelectInstance.clear(); // مسح الاختيارات من الحقل
                     customDishContainer.classList.add('hidden');
                     customItemInput.removeAttribute('required');
-                    selectEl.classList.remove('hidden');
                 } else {
                     alert('حدث خطأ أثناء إرسال الطلب، يرجى المحاولة لاحقاً.');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('تعذر الاتصال بالسيرفر، تأكد من تشغيل نفق ngrok.');
+                alert('تعذر الاتصال بالسيرفر، تأكد من تشغيل نفق ngrok الخاص بك.');
             }
         });
     </script>
