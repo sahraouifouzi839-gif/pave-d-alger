@@ -8,16 +8,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght=600;800&family=Poppins:wght=300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <style>
         body { font-family: 'Poppins', sans-serif; }
         .font-title { font-family: 'Playfair Display', serif; }
+        /* تصحيح الاتجاهات لتتوافق TomSelect مع الواجهة العربية بالكامل وبسلاسة */
         .ts-control { border-radius: 0.75rem !important; padding: 0.625rem 1rem !important; border-color: #E5E7EB !important; text-align: right !important; direction: rtl !important; }
         .ts-dropdown { border-radius: 0.75rem !important; text-align: right !important; direction: rtl !important; }
-        .ts-control .item { background-color: #FEF3C7 !important; color: #D97706 !important; border: 1px solid #FCD34D !important; border-radius: 0.5rem !important; padding: 2px 8px !important; display: inline-flex !important; align-items: center !important; gap: 4px !important; }
+        .ts-control .item { background-color: #FEF3C7 !important; color: #D97706 !important; border: 1px solid #FCD34D !important; border-radius: 0.5rem !important; padding: 2px 8px !important; display: inline-flex !important; align-items: center !important; gap: 4px !important; direction: rtl !important; }
         .ts-dropdown .optgroup-header { text-align: right !important; font-weight: bold !important; color: #1F2937 !important; }
+        .ts-dropdown .option { text-align: right !important; direction: rtl !important; }
     </style>
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 </head>
 <body class="bg-[#FFFDF9] text-gray-800">
 
@@ -226,13 +228,14 @@
             
             <div class="bg-white p-6 rounded-3xl shadow-sm max-w-2xl mx-auto border border-gray-100">
                 <div class="w-full h-64 rounded-2xl overflow-hidden mb-6 shadow-inner">
+                    <!-- تم تصحيح وسم الإغلاق هنا ليكون </iframe> لمنع تعطل الجافاسكربت -->
                     <iframe 
                         src="https://maps.google.com/maps?q=La%20Grande%20Poste%20Alger&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                         class="w-full h-full border-0" 
                         allowfullscreen="" 
                         loading="lazy" 
                         referrerpolicy="no-referrer-when-downgrade">
-                    </table>
+                    </iframe>
                 </div>
                 <p class="text-gray-600 mb-6 text-sm leading-relaxed">Profitez de notre terrasse extérieure unique au cœur d'Alger. Idéal pour vos déjeuners professionnels, dîners en famille ou moments de détente face au monument historique.</p>
                 <div class="flex justify-center space-x-4">
@@ -247,6 +250,7 @@
     </footer>
 
     <script>
+        // إعداد وتفعيل مكتبة TomSelect بشكل احترافي مع دعم كامل للتنسيق والاتجاه العربي المباشر
         const tomSelectInstance = new TomSelect('#ordered-item', {
             plugins: ['remove_button'],
             create: false,
