@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -56,7 +56,7 @@
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 font-title mb-2">Le Poisson Doré de la Méditerranée</h3>
                     <p class="text-gray-600 text-sm mb-4">Poisson frais entier, délicatement grillé et sublimé par des touches de sauce tomate artisanale et moules sélectionnées.</p>
-                    <div class="flex justify-between items-center"><span class="text-[#DC2626] font-bold text-lg">1,800 DZD</span></div>
+                    <div class="flex justify-between items-center"><span class="text-[#DC2626] font-bold text-lg">1800 DZD</span></div>
                 </div>
             </div>
             <div class="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition duration-300">
@@ -64,7 +64,7 @@
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 font-title mb-2">Pizza Prestige aux Fruits Frais</h3>
                     <p class="text-gray-600 text-sm mb-4">Notre fameuse pâte artisanale garnie de fromages fondants, de morceaux de fraises fraîches et de fines tranches de pomme verde.</p>
-                    <div class="flex justify-between items-center"><span class="text-[#DC2626] font-bold text-lg">1,550 DZD</span></div>
+                    <div class="flex justify-between items-center"><span class="text-[#DC2626] font-bold text-lg">1550 DZD</span></div>
                 </div>
             </div>
             <div class="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition duration-300">
@@ -72,7 +72,7 @@
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 font-title mb-2">Salade César Croustillante</h3>
                     <p class="text-gray-600 text-sm mb-4">Un mélange croquant de poulet pané doré, de croûtons maison et de tomates juteuses, nappé d'une crème blanche onctueuse.</p>
-                    <div class="flex justify-between items-center"><span class="text-[#DC2626] font-bold text-lg">1,300 DZD</span></div>
+                    <div class="flex justify-between items-center"><span class="text-[#DC2626] font-bold text-lg">1300 DZD</span></div>
                 </div>
             </div>
         </div>
@@ -226,7 +226,7 @@
             <div class="bg-white p-6 rounded-3xl shadow-sm max-w-2xl mx-auto border border-gray-100">
                 <div class="w-full h-64 rounded-2xl overflow-hidden mb-6 shadow-inner">
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3197.876352932918!2d3.0587786!3d36.7725916!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fb2f763f0bb29%3A0x6968d6f9038e8cb4!2sGrande+Poste+d&#39;Alger!5e0!3m2!1sfr!2sdz!4v1710000000000" 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3197.876352932918!2d3.0587786!3d36.7725916!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fb2f763f0bb29%3A0x6968d6f9038e8cb4!2sGrande+Poste+d'Alger!5e0!3m2!1sfr!2sdz!4v1710000000000" 
                         class="w-full h-full border-0" 
                         allowfullscreen="" 
                         loading="lazy" 
@@ -251,7 +251,6 @@
         const customItemInput = document.getElementById('custom-item-name');
         const backBtn = document.getElementById('back-to-select');
 
-        // عند اختيار "طبق آخر"، يتم إخفاء القائمة المنسدلة وإظهار حقل الإدخال الحر فوراً
         selectEl.addEventListener('change', function() {
             if (this.value === 'custom_item') {
                 selectEl.classList.add('hidden');
@@ -261,7 +260,6 @@
             }
         });
 
-        // زر إلغاء الكتابة اليدوية للعودة إلى القائمة الافتراضية
         backBtn.addEventListener('click', function() {
             customDishContainer.classList.add('hidden');
             customItemInput.removeAttribute('required');
@@ -274,7 +272,6 @@
             e.preventDefault();
             
             let finalItem = selectEl.value;
-            // التحقق من حالة العرض لاستخراج القيمة الصحيحة
             if (selectEl.classList.contains('hidden')) {
                 finalItem = customItemInput.value;
             }
@@ -282,13 +279,13 @@
             const orderData = {
                 name: document.getElementById('customer-name').value,
                 phone: document.getElementById('customer-phone').value,
-                item: finalItem,
+                order: finalItem,
                 qty: parseInt(document.getElementById('order-qty').value),
                 notes: document.getElementById('order-notes').value,
                 timestamp: new Date().toISOString()
             };
 
-            const webhookUrl = 'https://xxxx.ngrok-free.app/webhook/v1/orders'; 
+            const webhookUrl = 'https://nonseparable-ginny-cellulous.ngrok-free.dev/webhook-test/pave-order'; 
 
             try {
                 const response = await fetch(webhookUrl, {
